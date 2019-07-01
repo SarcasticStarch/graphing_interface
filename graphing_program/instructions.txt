@@ -1,0 +1,9 @@
+instructions:
+
+1. Open and run the file setup.py, it is important that the file get_pip.py is in the same folder. This file installs
+   all of the packages required to run the program. Wait until the program finished the installations before moving on.
+
+2. Place your files in the designated folder. The program will only read files in its particular folder so otherwise the files file not be read.
+
+3. Run the data collection file located in the desired folder. This file will automatically read the files and initiate the
+   graphing interface.
