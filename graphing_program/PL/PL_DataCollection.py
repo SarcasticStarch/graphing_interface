@@ -7,6 +7,12 @@ from graphing_interface import interface
 files = [f for f in listdir('.') if isfile(f)]
 full_data = []
 
+filenames = []
+for filename in files:
+    if filename.endswith(".CSV"):
+        filenames.append(filename)
+label_row = [filenames,[]]
+full_data.append(label_row)
 for filename in files:
     if filename.endswith(".CSV"):
         with open(filename) as csvfile:

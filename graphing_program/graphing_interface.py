@@ -42,8 +42,9 @@ class interface(Frame):
         self.initUI(sets)
         self.mainloop()
 
-    def initUI(self, sets):
-
+    def initUI(self, full_sets):
+        sets = full_sets[1:]
+        self.filenames = full_sets[0]
         self.current_palette = sns.cubehelix_palette(len(sets), start=2, rot=0, dark=.2, light=.85, reverse=True)
         self.sets = sets
 
@@ -60,9 +61,6 @@ class interface(Frame):
         self.ax.set_alpha(0.0)
         self.ax.spines['left'].set_visible(True)
 
-
-        GradientFrame(outer_options_frame, from_color="#FCFCFC", to_color="#404040", height=1200, width=800).place(anchor='nw',
-                                                                                                 bordermode=INSIDE)
         # w, h = self.master.winfo_screenwidth(), self.master.winfo_screenheight()
         # if self.master.winfo_screenwidth() != w or self.master.winfo_screenheight()
         options_frame = Frame(outer_options_frame)
@@ -147,7 +145,7 @@ class interface(Frame):
                 self.y_maxmax = max(y)
             if min(y) < self.y_minmin:
                 self.y_minmin = min(y)
-            line, = self.ax.plot(x, y, linewidth=3, color=self.current_palette[sets.index(set)])
+            line, = self.ax.plot(x, y, linewidth=2, color=self.current_palette[sets.index(set)])
             self.lines.append(line)
             self.lines_onoffs.append(1)
             # self.ax.scatter(x, y, linewidth=3, color=self.current_palette[sets.index(set)])
@@ -160,7 +158,8 @@ class interface(Frame):
             self.data_check_onoffs.append(data_check_onoff)
 
             dataset_box = Entry(dataset_frame, fg='#009999', bg = '#C0C0C0', justify = 'center')
-            dataset_box.insert(0,'Dataset ' + str(sets.index(set)+1))
+
+            dataset_box.insert(0,self.filenames[0][sets.index(set)].strip('.csv.txt'))
             self.data_titles.append(dataset_box)
             dataset_box.pack(expand=True, fill = 'both', side=LEFT)
             max_frame = Frame(current_frame, bg='#C0C0C0')
@@ -237,12 +236,12 @@ class interface(Frame):
         xlim_label = Label(xlimit_frame, text='X Limit', fg='#009999', bg='#C0C0C0')
         xlim_label.pack(side=LEFT)
         self.xlim_lower_box = Entry(xlimit_frame, width=7, fg='#009999')
-        self.xlim_lower_box.insert(0, self.xlow)
+        self.xlim_lower_box.insert(0, round(self.xlow,4))
         self.xlim_lower_box.pack(side=LEFT, expand=True, fill='x')
         xlim_higher_label = Label(xlimit_frame, text='to', fg='#009999', bg='#C0C0C0')
         xlim_higher_label.pack(side=LEFT)
         self.xlim_higher_box = Entry(xlimit_frame, width=7, fg='#009999')
-        self.xlim_higher_box.insert(0, self.xhigh)
+        self.xlim_higher_box.insert(0, round(self.xhigh,4))
         self.xlim_higher_box.pack(side=LEFT, expand=True, fill='x')
 
         ylimit_frame = Frame(options_frame)
@@ -250,21 +249,39 @@ class interface(Frame):
         ylim_label = Label(ylimit_frame, text='Y Limit', fg='#009999', bg='#C0C0C0')
         ylim_label.pack(side=LEFT)
         self.ylim_lower_box = Entry(ylimit_frame, width=7, fg='#009999')
-        self.ylim_lower_box.insert(0, self.ylow)
+        self.ylim_lower_box.insert(0, round(self.ylow,4))
         self.ylim_lower_box.pack(side=LEFT, expand=True, fill='x')
         ylim_higher_label = Label(ylimit_frame, text='to', fg='#009999', bg='#C0C0C0')
         ylim_higher_label.pack(side=LEFT)
         self.ylim_higher_box = Entry(ylimit_frame, width=7, fg='#009999')
-        self.ylim_higher_box.insert(0, self.yhigh)
+        self.ylim_higher_box.insert(0, round(self.yhigh,4))
         self.ylim_higher_box.pack(side=LEFT, expand=True, fill='x')
+
+        ticknum_frame = Frame(options_frame)
+        ticknum_frame.pack(expand = True, fill = 'x')
+        ticknum_label = Label(ticknum_frame, text = 'Number of Axis Ticks', fg = '#009999', bg='#C0C0C0')
+        ticknum_label.pack(side=LEFT, expand = True, fill = 'x')
+        self.ticknum_box = Entry(ticknum_frame, fg='#009999')
+        self.ticknum_box.pack(side = LEFT, expand = True, fill = 'x')
+        self.ticknum_box.insert(0, '6')
+
 
         bg_slider_frame = Frame(options_frame)
         bg_slider_frame.pack(expand = True, fill = 'x')
         bg_slider_label = Label(bg_slider_frame, text = 'Background Color', fg = '#009999', bg = '#C0C0C0')
         bg_slider_label.pack(expand = True, fill = 'x')
-        self.bg_slider = Scale(bg_slider_frame, from_=0, to=255, orient='horizontal', bg = '#C0C0C0')
+        self.bg_slider = Scale(bg_slider_frame, from_=0, to=255, orient='horizontal', bg = '#C0C0C0', command = self.background)
         self.bg_slider.set(210)
+        self.color = 210
         self.bg_slider.pack(expand = True, fill = 'x')
+
+        lw_slider_frame = Frame(options_frame)
+        lw_slider_frame.pack(expand = True, fill = 'x')
+        lw_slider_label = Label(bg_slider_frame, text = 'Line Width', fg = '#009999', bg = '#C0C0C0')
+        lw_slider_label.pack(expand = True, fill = 'x')
+        self.lw_slider = Scale(lw_slider_frame, from_=0, to=4, orient='horizontal', bg = '#C0C0C0', command = self.linewidth, resolution = .1)
+        self.lw_slider.set(2)
+        self.lw_slider.pack(expand = True, fill = 'x')
 
         legend_frame = Frame(options_frame)
         legend_frame.pack(expand=True, fill = 'x')
@@ -292,30 +309,50 @@ class interface(Frame):
 
             lower_text = self.xlim_lower_box.get()
             self.ax.set_xlim(xmin=float(lower_text))
-            self.ax.set_xticks(linspace(float(lower_text), self.ax.get_xlim()[1], 20))
+            #self.ax.set_xticks(linspace(float(lower_text), self.ax.get_xlim()[1], 20))
             self.canvas.get_tk_widget().update()
             self.canvas.draw()
 
         if self.xlim_higher_box.get() != self.xhigh:
             higher_text = self.xlim_higher_box.get()
             self.ax.set_xlim( xmax = float(higher_text))
-            self.ax.set_xticks(linspace(self.ax.get_xlim()[0], float(higher_text), 20))
+            #self.ax.set_xticks(linspace(self.ax.get_xlim()[0], float(higher_text), 20))
             self.canvas.get_tk_widget().update()
             self.canvas.draw()
-
+    def linewidth(self,w):
+        self.current_width = self.lw_slider.get()
+        for set in self.sets:
+            try:
+                self.lines[self.sets.index(set)].remove()
+            except:
+                pass
+            x = set[0]
+            y = set[1]
+            if self.data_check_onoffs[self.sets.index(set)].get() == 1:
+                line, = self.ax.plot(x, y, linewidth=self.current_width, color=self.current_palette[self.sets.index(set)])
+                self.lines[self.sets.index(set)] = line
+            self.canvas.get_tk_widget().update()
+            self.canvas.draw()
+    def tick_number(self):
+        tick_num = int(self.ticknum_box.get())
+        print(self.ax.get_xlim)
+        self.ax.set_xticks(linspace(self.ax.get_xlim()[0], self.ax.get_xlim()[1], tick_num))
+        self.ax.set_yticks(linspace(self.ax.get_ylim()[0], self.ax.get_ylim()[1], tick_num))
+        self.canvas.get_tk_widget().update()
+        self.canvas.draw()
 
     def ylimit(self):
         if self.ylim_lower_box.get() != self.ylow:
             lower_text = self.ylim_lower_box.get()
             self.ax.set_ylim(ymin=float(lower_text))
-            self.ax.set_yticks(linspace(float(lower_text), self.ax.get_ylim()[1], 20))
+            #self.ax.set_yticks(linspace(float(lower_text), self.ax.get_ylim()[1], 20))
             self.canvas.get_tk_widget().update()
             self.canvas.draw()
 
         if self.ylim_higher_box.get() != self.yhigh:
             higher_text = self.ylim_higher_box.get()
             self.ax.set_ylim(ymax=float(higher_text))
-            self.ax.set_yticks(linspace(self.ax.get_ylim()[0], float(higher_text), 20))
+            #self.ax.set_yticks(linspace(self.ax.get_ylim()[0], float(higher_text), 20))
             self.canvas.get_tk_widget().update()
             self.canvas.draw()
     # def linewidth(self):
@@ -327,9 +364,9 @@ class interface(Frame):
         self.canvas.get_tk_widget().update()
         self.canvas.draw()
 
-    def background(self):
-        color = self.bg_slider.get()
-        self.ax.set_facecolor((color / 255, color / 255, color / 255))
+    def background(self,num):
+        self.color = self.bg_slider.get()
+        self.ax.set_facecolor((self.color / 255, self.color / 255, self.color / 255))
         self.canvas.get_tk_widget().update()
         self.canvas.draw()
 
@@ -491,9 +528,9 @@ class interface(Frame):
         self.ylimit()
         self.maximum()
         self.minimum()
-        self.background()
         self.integral()
         self.add_legend()
+        self.tick_number()
 
     def integral(self):
         for box in self.integrate_onoffs:
@@ -595,7 +632,7 @@ class interface(Frame):
                 if self.lines_onoffs[self.data_check_onoffs.index(chk)] == 0:
                     x = self.sets[self.data_check_onoffs.index(chk)][0]
                     y = self.sets[self.data_check_onoffs.index(chk)][1]
-                    line, = self.ax.plot(x, y, linewidth=3, color=self.current_palette[self.data_check_onoffs.index(chk)])
+                    line, = self.ax.plot(x, y, linewidth=self.current_width, color=self.current_palette[self.data_check_onoffs.index(chk)])
                     self.lines[self.data_check_onoffs.index(chk)] = line
                     self.canvas.get_tk_widget().update()
                     self.canvas.draw()
@@ -744,6 +781,7 @@ class interface(Frame):
 
     def lin_reg(self):
         ...
+
 
 
 

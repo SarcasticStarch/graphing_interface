@@ -5,7 +5,13 @@ from os.path import isfile
 
 files = [f for f in listdir('.') if isfile(f)]
 full_data = []
+filenames = []
+for filename in files:
 
+    if filename.endswith(".txt"):
+        filenames.append(filename)
+label_row = [filenames,[]]
+full_data.append(label_row)
 for filename in files:
     if filename.endswith(".txt"):
         with open(filename) as csvfile:
@@ -34,6 +40,6 @@ for filename in files:
                 dataset.append(row)
             gdata.append(voltage)
             gdata.append(current)
-            full_data.append(gdata)
 
+            full_data.append(gdata)
 interface(full_data)
