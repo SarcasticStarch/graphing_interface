@@ -8,15 +8,16 @@ instructions:
 
 3. Open the setup.py file in pycharm and run it. If you do not see the green run button, there should be a something that says, "No Python interpreter configured for this project". If this is the case, click on "Configure Python interpreter". Click the dropdown menu that says, "<No interpreter>". If there is an option that says Python 3.7 select it and hit OK. If it is not displayed there, click the gear icon, then hit add, and locate python in your directory, then hit OK. You should now be able to run the file.
 
-   ***If the computer is old running this file may result in error messages rather than a proper download. If this is the case, download             Microsoft Visual C++ 2015 Redistributable from https://www.microsoft.com/en-us/download/details.aspx?id=52685 and OpenSSL                 from https://slproweb.com/products/Win32OpenSSL.html
+   ***If the computer is old running this file may result in error messages rather than a proper download. If this is the case, download Microsoft Visual C++ 2015 Redistributable from https://www.microsoft.com/en-us/download/details.aspx?id=52685 and OpenSSL                 from https://slproweb.com/products/Win32OpenSSL.html
 
-4. After setup/py has successfully finished running, the program should be ready to run. 
+4. After setup/py has successfully finished running, the program should be ready to run. Place all of the files that you want to read into the corresponding folder, then open run the file in that folder. For example, if you want to graph three Delta R files, copy them all into the Delta R folder, then open and run Delta_R_DataCollection.py. 
 
-2. Place your files in the designated folder. The program will only read files in its particular folder so otherwise the files file not be read.
+If you have any issues downloading or using the software feel free to contact me,
 
-3. Run the data collection file located in the desired folder. This file will automatically read the files and initiate the
-   graphing interface.
-   
+Jacob St. Martin
+jls4dn@virginia.edu
+
+
    
    
    
