@@ -8,10 +8,9 @@ instructions:
 
 3. Open the setup.py file in pycharm and run it. If you do not see the green run button, there should be a something that says, "No Python interpreter configured for this project". If this is the case, click on "Configure Python interpreter". Click the dropdown menu that says, "<No interpreter>". If there is an option that says Python 3.7 select it and hit OK. If it is not displayed there, click the gear icon, then hit add, and locate python in your directory, then hit OK. You should now be able to run the file.
 
-   ***If the computer is old running this file may result in error messages rather than a proper download. If this is the case, download                    Microsoft Visual C++ 2015 Redistributable from https://www.microsoft.com/en-us/download/details.aspx?id=52685 . 
+   ***If the computer is old running this file may result in error messages rather than a proper download. If this is the case, download             Microsoft Visual C++ 2015 Redistributable from https://www.microsoft.com/en-us/download/details.aspx?id=52685 and OpenSSL                 from https://slproweb.com/products/Win32OpenSSL.html
 
-If this is your first time using pycharm on the device you may not see the run option, it is important that the file get_pip.py is in the same folder. This file installs
-   all of the packages required to run the program. Wait until the program finished the installations before moving on.
+4. After setup/py has successfully finished running, the program should be ready to run. 
 
 2. Place your files in the designated folder. The program will only read files in its particular folder so otherwise the files file not be read.
 
